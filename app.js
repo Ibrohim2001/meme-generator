@@ -177,15 +177,24 @@ quoteButton.addEventListener('click', () => {
 
 riddleButton.addEventListener('click', () => {
   const randomRiddle = Math.floor(Math.random() * riddles.length);
-  const riddleQuestion = riddles[randomRiddle].question;
-  const riddleQuestionText = document.createElement('p');
-  riddleQuestionText.textContent = riddleQuestion;
-  const riddleAnswer = riddles[randomRiddle].answer;
-  riddleAnswerText = document.createElement('p');
-  riddleAnswerText.textContent = riddleAnswer;
+  const {question, answer} = riddles[randomRiddle];
+  const riddleQuestion = document.createElement('p');
+  riddleQuestion.textContent = question;
+  
+  const riddleAnswer = document.createElement('p');
+  riddleAnswer.setAttribute('id', 'answer_text');
+  riddleAnswer.textContent = answer;
   clearAll();
-  riddlesContent.appendChild(riddleQuestionText);
-  revealButton.addEventListener('click', () => {
-    riddlesContent.appendChild(riddleAnswerText);
-  });
+  riddleAnswer.hidden = true;
+
+  riddlesContent.appendChild(riddleQuestion);
+  riddlesContent.appendChild(riddleAnswer);
+});
+
+revealButton.addEventListener('click', () => {
+  const riddleAnswer = document.querySelector('#answer_text');
+  const riddle = riddlesContent.querySelector('p');
+  if(riddle && riddleAnswer.hidden) {
+    riddleAnswer.hidden = false;
+  }
 });
