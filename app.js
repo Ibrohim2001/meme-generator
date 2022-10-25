@@ -8,37 +8,6 @@ const jokesContent = document.querySelector('.jokes_content');
 const quotesContent = document.querySelector('.quotes_content');
 const riddlesContent = document.querySelector('.riddles_content');
 
-// MEMES
-
-const memes = [
-  "https://i.redd.it/a0v87gwzoge61.jpg",
-  "https://i.redd.it/q29egav34ee61.jpg",
-  "https://i.redd.it/iij16swxjie61.jpg",
-  "https://i.redd.it/vek7dm2hrge61.jpg",
-  "https://www.testbytes.net/wp-content/uploads/2019/06/Untitled-8.png",
-  "https://miro.medium.com/max/1000/0*Ua695vjzFHV6VNOX.png",
-  "https://pbs.twimg.com/media/EKkPagPXkAA__Qo.jpg",
-  "https://code-love.com/wp-content/uploads/2019/03/download.jpeg",
-  "https://www.thecoderpedia.com/wp-content/uploads/2020/06/Programming-Memes-Programmer-while-sleeping.jpg",
-  "https://www.thecoderpedia.com/wp-content/uploads/2020/06/Programming-Memes-Evolution-of-Memory-Storage-1024x996.jpg",
-  "https://www.thecoderpedia.com/wp-content/uploads/2020/06/Programming-Memes-Error-in-Code-896x1024.jpg",
-  "https://www.thecoderpedia.com/wp-content/uploads/2020/06/Coding-Meme-Code-Comments-be-Like-925x1024.jpg",
-  "https://www.thecoderpedia.com/wp-content/uploads/2020/06/Internet-Explorer-Joke-915x1024.jpg",
-];
-
-// JOKES
-const jokes = [
-  "This statement",
-  "Eight bytes walk into a bar.  The bartender asks, “Can I get you anything?” “Yeah,” reply the bytes.  “Make us a double.”",
-  "There are only 10 kinds of people in this world: those who know binary and those who don’t.",
-  "All programmers are playwrights, and all computers are lousy actors.",
-  "Have you heard about the new Cray super computer?  It’s so fast, it executes an infinite loop in 6 seconds.",
-  "The generation of random numbers is too important to be left to chance.",
-  "Debugging: Removing the needles from the haystack.",
-  "“Debugging” is like being the detective in a crime drama where you are also the murderer.",
-  "There are two ways to write error-free programs; only the third one works.",
-  "The best thing about a Boolean is even if you are wrong, you are only off by a bit.",
-];
 
 // Quotes
 
@@ -144,22 +113,56 @@ function clearAll() {
   quotesContent.innerHTML = '';
   riddlesContent.innerHTML = '';
 }
+
+const api_url = "https://api.imgflip.com/get_memes";
+const joke_api_url = "https://icanhazdadjoke.com/";
+
 memeButton.addEventListener('click', () => {
-  const randomImg = Math.floor(Math.random() * memes.length);
-  const img = memes[randomImg];
-  const image = document.createElement('img');
-  image.setAttribute('src', img);
-  clearAll();
-  memesContent.appendChild(image);
+  // fetch data
+  async function getMemes(url) {
+    const response = await fetch(url);
+    const data = await response.json();
+    getData(data);
+  }
+  // call function to fetch data
+  getMemes(api_url);
+
+  // getData to print to the screen
+  const getData = (data) => {
+    const memes = data.data.memes;
+    const randomImg = Math.floor(Math.random() * memes.length);
+    const img = memes[randomImg].url;
+    const image = document.createElement('img');
+    image.setAttribute('src', img);
+    clearAll();
+    memesContent.appendChild(image);
+  }
 });
 
 jokeButton.addEventListener('click', () => {
-  const randomJoke = Math.floor(Math.random() * jokes.length);
-  const joke = jokes[randomJoke];
-  const jokeText = document.createElement('p');
-  jokeText.textContent = joke;
-  clearAll();
-  jokesContent.appendChild(jokeText);
+  // fetch jokes
+  const fetchJokes = async (url) => {
+    const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            Accept: 'application/json'
+          }
+    });
+    const jokesData = await response.json();
+    // call getJokes function
+    getJokes(jokesData);
+  }
+  
+  // call fetchJokes() function 
+  fetchJokes(joke_api_url);
+
+  // print the joke to the screen
+  const getJokes = (jokesData) => {
+    const jokeText = document.createElement('p');
+    jokeText.textContent = jokesData.joke;
+    clearAll();
+    jokesContent.appendChild(jokeText);
+  }
 });
 
 quoteButton.addEventListener('click', () => {
